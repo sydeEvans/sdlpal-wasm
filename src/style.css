@@ -1,89 +1,138 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+    font-family: arial;
+    margin: 0;
+    padding: 0;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.emscripten {
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+div.emscripten {
+    text-align: center;
 }
 
-.card {
-  padding: 2em;
+div.emscripten_border {
+    border: 1px solid black;
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+canvas.emscripten {
+    border: 0px none;
+    background-color: black;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+#emscripten_logo {
+    display: inline-block;
+    margin: 0;
+}
+
+.spinner {
+    height: 30px;
+    width: 30px;
+    margin: 0;
+    margin-top: 20px;
+    margin-left: 20px;
+    display: inline-block;
+    vertical-align: top;
+
+    -webkit-animation: rotation .8s linear infinite;
+    -moz-animation: rotation .8s linear infinite;
+    -o-animation: rotation .8s linear infinite;
+    animation: rotation 0.8s linear infinite;
+
+    border-left: 5px solid rgb(235, 235, 235);
+    border-right: 5px solid rgb(235, 235, 235);
+    border-bottom: 5px solid rgb(235, 235, 235);
+    border-top: 5px solid rgb(120, 120, 120);
+
+    border-radius: 100%;
+    background-color: rgb(189, 215, 46);
+}
+
+@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes rotation {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-o-keyframes rotation {
+    from {
+        -o-transform: rotate(0deg);
+    }
+    to {
+        -o-transform: rotate(360deg);
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#status {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 30px;
+    margin-left: 20px;
+    font-weight: bold;
+    color: rgb(120, 120, 120);
+}
+
+#progress {
+    height: 20px;
+    width: 300px;
+}
+
+#controls {
+    display: inline-block;
+    float: right;
+    vertical-align: top;
+    margin-top: 30px;
+    margin-right: 20px;
+}
+
+input[type=file] {
+    color: transparent;
+    font-size: 12pt;
+}
+
+input[type=file]::-webkit-file-upload-button {
+    margin: 0px;
+    font-size: 12pt;
+    padding: 4px;
+    border: solid 1px #AACFE4;
+    width: 209px;
+    height: 31px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px #ccc;
+}
+
+button, #btnLaunch, #btnDeleteData, #btnDownloadSave {
+    margin: 0px;
+    font-size: 12pt;
+    padding: 4px;
+    border: solid 1px #AACFE4;
+    width: 209px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px #ccc;
 }
