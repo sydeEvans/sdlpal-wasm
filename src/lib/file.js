@@ -94,7 +94,12 @@ async function downloadRemotePALZip(options = {}) {
         responseType: "arraybuffer",
         onDownloadProgress(event) {
             const {loaded, total, progress} = event;
-            const text = `下载文件中: ${loaded}/${total}, 进度: ${(progress * 100).toFixed(2)}%`
+            let text;
+            if (progress) {
+                text = `下载文件中: ${loaded}/${total}, 进度: ${(progress * 100).toFixed(2)}%`;
+            } else {
+                text = `下载文件中: ${loaded}`;
+            }
             onStatus(text);
         },
     });
