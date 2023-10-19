@@ -202,7 +202,8 @@ const fileAPI = {
     deleteFileByPath,
     writeZipFileToData,
     putSaveToRemote,
-    loadSaveToRemote
+    loadSaveToRemote,
+    downloadSaves
 }
 
 window.fileAPI = fileAPI;

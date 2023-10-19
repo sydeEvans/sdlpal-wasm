@@ -53,11 +53,15 @@ export default {
     importSave() {
       document.getElementById('fileid').click();
     },
-    saveFileChange(event) {
-      console.log(event, event.target.files)
+    async saveFileChange(event) {
+      // console.log(event, event.target.files)
       const saveFileZip = event.target.files[0];
 
-      fileAPI.writeZipFileToData(saveFileZip);
+      await fileAPI.writeZipFileToData(saveFileZip);
+      window.alert('导入成功');
+    },
+    downloadSave() {
+      fileAPI.downloadSaves();
     }
   },
 
@@ -73,6 +77,10 @@ export default {
       <div class="btn-box">
         <button class="btn" @click="launch">
           开始
+        </button>
+
+        <button class="btn" @click="downloadSave">
+          下载存档
         </button>
 
         <input id='fileid' type='file' hidden v-on:change="saveFileChange"/>
