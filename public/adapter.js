@@ -93,14 +93,9 @@ var Module = {
         Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
     },
     onRuntimeInitialized: function () {
-        try {
-            FS.mkdir('/data');
-        } catch (e) {
-        }
-        FS.mount(IDBFS, {}, '/data');
-        Module.setStatus(strSyncingFs);
-        FS.syncfs(true, function (err) {
-            Module.setStatus(strDone);
+        window.postMessage({
+            status: 'onRuntimeInitialized',
+            payload: {},
         });
     }
 };

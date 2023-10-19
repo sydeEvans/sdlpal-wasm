@@ -1,138 +1,102 @@
 <script>
-const FS = window.FS;
-const JSZip = window.JSZip;
-console.log(FS, Module);
+
+import {fileAPI} from "./lib/file.js";
+
+function resizeGame() {
+  const wrap = document.querySelector('#wrap_game');
+  const wrapWidth = wrap.offsetWidth;
+  const canvasWidth = 640
+
+  const scale = wrapWidth/canvasWidth;
+
+  window.GAME_CANVAS.style.transformOrigin = '0 0';
+  window.GAME_CANVAS.style.transform= `scale(${scale})`;
+}
 
 export default {
+  name: "App",
   data() {
     return {
-      count: 0
+      gameMode: 0
     }
   },
   mounted() {
-    const wrap = document.querySelector('#wrap_game');
-    wrap.appendChild(window.GAME_CANVAS);
+    window.onresize = () => {
+      resizeGame();
+    }
   },
   methods: {
     launch() {
-      let checkFile = false;
-      try {
-        if (FS.stat('/data/fbp.mkf').size > 0) {
-          checkFile = true;
-        }
-      } catch (e) {
-      }
-      if (!checkFile) {
-        Module.setStatus(strNoData);
-        return;
-      }
+      this.gameMode = 1;
+
+      const wrap = document.querySelector('#wrap_game');
+      wrap.appendChild(window.GAME_CANVAS);
+      resizeGame();
 
       const mainFunc = Module.cwrap('EMSCRIPTEN_main', 'number', ['number', 'number'], {async: true});
       mainFunc(0, 0);
     },
-    downloadSaves() {
-      const zip = new JSZip();
-      let hasData = false;
-      Object.keys(FS.lookupPath('/data').node.contents).forEach(element => {
-        if (element.endsWith('.rpg')) {
-          const array = FS.readFile('/data/' + element);
-          zip.file(element, array);
-          hasData = true;
-        }
-      });
-      if (!hasData) {
-        window.alert(strNoSave);
-        return;
-      }
-      zip.generateAsync({type: "base64"}).then(function (base64) {
-        window.location = "data:application/zip;base64," + base64;
-      }, function (err) {
-        Module.printErr(err);
-      });
+    importSave() {
+      document.getElementById('fileid').click();
     },
-    loadZip() {
-      const fileBtn = document.getElementById('btnLoadZip');
-      Module.setStatus(strLoading + ' ' + fileBtn.files[0].name + '...');
-      // spinnerElement.style.display = 'inline-block';
+    saveFileChange(event) {
+      console.log(event, event.target.files)
+      const saveFileZip = event.target.files[0];
 
-      const fileInput = document.getElementById("btnLoadZip");
-      const zip = new JSZip();
-      const file = fileInput.files[0];
-
-      zip.loadAsync(file).then(function (z) {
-        z.forEach(function (relativePath, zipEntry) {
-          if (zipEntry.dir) {
-            var pathArr = relativePath.split('/');
-            var currPath = '/data';
-            for (var i = 0; i < pathArr.length; i++) {
-              currPath += '/';
-              currPath += pathArr[i];
-              try {
-                FS.mkdir(currPath.toLowerCase(), 0o777);
-              } catch (e) {
-              }
-            }
-          } else {
-            zip.sync(function () {
-              zipEntry.async('uint8array').then(function (arr) {
-                FS.writeFile('/data/' + relativePath.toLowerCase(), arr, {encoding: 'binary'});
-              })
-            });
-          }
-        });
-        Module.setStatus(strSyncingFs);
-        FS.syncfs(function (err) {
-          Module.setStatus(strDone);
-          // spinnerElement.style.display = 'none';
-        });
-      });
-    },
-    clearData() {
-      if (window.prompt(strDelConfirm) === "YES") {
-        const doDelete = function (path) {
-          Object.keys(FS.lookupPath(path).node.contents).forEach(element => {
-            const stat = FS.stat(path + '/' + element);
-            if (stat.mode & 0o040000) {
-              doDelete(path + '/' + element);
-              FS.rmdir(path + '/' + element);
-            } else {
-              FS.unlink(path + '/' + element);
-            }
-          });
-        };
-        Module.setStatus(strDeleting);
-        // spinnerElement.style.display = 'inline-block';
-        doDelete('/data');
-        Module.setStatus(strSyncingFs);
-        FS.syncfs(false, function (err) {
-          // spinnerElement.style.display = 'none';
-          Module.setStatus(strDone);
-        });
-      }
+      fileAPI.writeZipFileToData(saveFileZip);
     }
-  }
+  },
+
 }
 </script>
 
 <template>
-  <div>
-    <div id='controls'>
+  <div class="app" id="wrap_game">
+    <div class='controls' v-show="gameMode === 0">
+      <div>
+        <img src="https://registry.npmmirror.com/evans-sdlpal-source/1.0.0/files/lib/icon.png" alt="">
+      </div>
+      <div class="btn-box">
+        <button class="btn" @click="launch">
+          开始
+        </button>
 
-      <button @click="launch">
-        开始
-      </button>
-      <!--      <span>-->
-      <!--        <input type="file" id="btnLoadZip" accept="application/zip" value="Load Zip" onchange="loadZip();">-->
-      <!--        <input type="button" id="btnDeleteData" value="Delete Data" onclick="clearData();">-->
-      <!--        <input type="button" id="btnDownloadSave" value="Download Saved Games" onclick="downloadSaves();">-->
-      <!--        <input type="button" id="btnLaunch" value="Launch" onclick="launch();">-->
-      <!--      </span>-->
+        <input id='fileid' type='file' hidden v-on:change="saveFileChange"/>
+        <button class="btn" @click="importSave">
+          导入存档
+        </button>
+      </div>
     </div>
 
-    <div id="wrap_game"></div>
+    <!--    <canvas></canvas>-->
   </div>
 </template>
 
 <style scoped>
+.app {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
 
+.controls {
+  margin: 200px auto;
+  width: 400px;
+  text-align: center;
+
+  .btn-box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    font-size: 20px;
+    width: 200px;
+    margin-top: 20px;
+    padding: 10px 20px;
+  }
+}
 </style>
