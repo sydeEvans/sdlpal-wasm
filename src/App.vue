@@ -5,12 +5,26 @@ import {fileAPI} from "./lib/file.js";
 function resizeGame() {
   const wrap = document.querySelector('#wrap_game');
   const wrapWidth = wrap.offsetWidth;
-  const canvasWidth = 640
+  const wrapHeight = wrap.offsetHeight;
 
-  const scale = wrapWidth/canvasWidth;
+  const canvasWidth = 640;
+  const canvasHeight = 400;
+
+  const scaleX = wrapWidth/canvasWidth;
+  const scaleY = wrapHeight/canvasHeight;
+
+  const scale = scaleX < scaleY ? scaleX : scaleY;
 
   window.GAME_CANVAS.style.transformOrigin = '0 0';
   window.GAME_CANVAS.style.transform= `scale(${scale})`;
+
+  if (scaleX > scaleY) {
+    const width = canvasWidth * scale;
+    const left = (wrapWidth - width) / 2;
+
+    window.GAME_CANVAS.style.position = 'relative';
+    window.GAME_CANVAS.style.left = left + 'px';
+  }
 }
 
 export default {
@@ -75,7 +89,7 @@ export default {
 <style scoped>
 .app {
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 0;
   bottom: 0;
   right: 0;
