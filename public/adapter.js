@@ -93,6 +93,7 @@ var Module = {
         Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
     },
     onRuntimeInitialized: function () {
+        window.__ready__ = true;
         window.postMessage({
             status: 'onRuntimeInitialized',
             payload: {},

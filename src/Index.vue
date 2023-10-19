@@ -4,6 +4,10 @@ import {fileAPI} from "./lib/file.js";
 import App from "./App.vue";
 
 function ready(cb) {
+  if (window.__ready__) {
+    cb();
+    return;
+  }
   window.addEventListener(
       "message",
       (event) => {
@@ -29,7 +33,6 @@ export default {
   mounted() {
     ready(async () => {
       await fileAPI.mountFileSystem();
-
       await fileAPI.downloadRemotePALZip({
         onStatus: (text) => {
           console.log(text);

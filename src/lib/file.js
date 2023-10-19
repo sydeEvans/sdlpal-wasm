@@ -51,9 +51,9 @@ function syncFilesystem(b) {
     })
 }
 
-async function writeZipFileToData(zipData) {
+async function writeZipFileToData(zipData, loadOptions = {}) {
     const zip = new JSZip();
-    const z = await zip.loadAsync(zipData);
+    const z = await zip.loadAsync(zipData, loadOptions);
 
     z.forEach(function (relativePath, zipEntry) {
         if (zipEntry.dir) {
@@ -121,7 +121,6 @@ async function mountFileSystem() {
 
     FS.mount(IDBFS, {}, '/data');
     await syncFilesystem(true);
-    // await delay(100);
 }
 
 async function clearSave() {
@@ -132,6 +131,40 @@ async function clearSave() {
     });
 
    await syncFilesystem();
+}
+
+const defaultSaveName = 'save.zip';
+async function putSaveToRemote() {
+    const zip = new JSZip();
+    let hasData = false;
+    Object.keys(FS.lookupPath('/data').node.contents).forEach(element => {
+        if (element.endsWith('.rpg')) {
+            const array = FS.readFile('/data/' + element);
+            zip.file(element, array);
+            hasData = true;
+        }
+    });
+
+    if (!hasData) {
+        console.log('没有存档');
+        return;
+    }
+
+    const content = await zip.generateAsync({type: "base64"});
+
+    await axios.post('/api/upload', {
+        name: defaultSaveName,
+        content
+    })
+}
+
+async function loadSaveToRemote() {
+    const resp = await axios.get('/api/load?name=' + defaultSaveName);
+    const zipData = resp.data.kvResp;
+
+    await writeZipFileToData(zipData, {
+        base64: true,
+    })
 }
 
 function downloadSaves() {
@@ -162,7 +195,9 @@ const fileAPI = {
     mountFileSystem,
     downloadRemotePALZip,
     deleteFileByPath,
-    writeZipFileToData
+    writeZipFileToData,
+    putSaveToRemote,
+    loadSaveToRemote
 }
 
 window.fileAPI = fileAPI;
