@@ -17,7 +17,11 @@ function deleteFileByPath(path) {
 }
 
 function checkGameData() {
-    return FS.stat('/data/fbp.mkf').size > 0;
+    try {
+        return FS.stat('/data/fbp.mkf').size > 0;
+    } catch (e) {
+        return false;
+    }
 }
 
 function clearGameData(done) {
@@ -36,9 +40,9 @@ function delay(t) {
 }
 
 
-function syncFilesystem() {
+function syncFilesystem(b) {
     return new Promise((resolve, reject) => {
-        FS.syncfs(function (err) {
+        FS.syncfs(!!b, function (err) {
             if (err) {
                 reject(err)
             }
@@ -85,7 +89,6 @@ async function downloadRemotePALZip(options = {}) {
         onDone();
         return;
     }
-
     onStatus('开始下载文件');
     const response = await axios.get(palZipUrl, {
         responseType: "arraybuffer",
@@ -109,25 +112,27 @@ async function downloadRemotePALZip(options = {}) {
     }
 }
 
-function mountFileSystem() {
+async function mountFileSystem() {
     try {
         FS.mkdir('/data');
     } catch (e) {
+        console.log(e)
     }
 
     FS.mount(IDBFS, {}, '/data');
-
-    return new Promise((resolve, reject) => {
-        FS.syncfs(true, function (err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    })
+    await syncFilesystem(true);
+    // await delay(100);
 }
 
+async function clearSave() {
+    Object.keys(FS.lookupPath('/data').node.contents).forEach(element => {
+        if (element.endsWith('.rpg')) {
+            FS.unlink('/data/' + element);
+        }
+    });
+
+   await syncFilesystem();
+}
 
 function downloadSaves() {
     const zip = new JSZip();
@@ -151,6 +156,7 @@ function downloadSaves() {
 }
 
 const fileAPI = {
+    clearSave,
     checkGameData,
     clearGameData,
     mountFileSystem,

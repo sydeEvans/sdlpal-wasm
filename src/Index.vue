@@ -39,7 +39,7 @@ export default {
           this.loaded = true;
         },
         onError(err) {
-          console.log(err)
+          console.trace(err)
         }
       })
     })
