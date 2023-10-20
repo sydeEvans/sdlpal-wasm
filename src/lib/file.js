@@ -158,13 +158,13 @@ async function putSaveToRemote(name = defaultSaveName) {
     const content = await zip.generateAsync({type: "base64"});
 
     await axios.post('/api/upload', {
-        name: defaultSaveName,
+        name,
         content
     })
 }
 
 async function loadSaveToRemote(name = defaultSaveName) {
-    const resp = await axios.get('/api/load?name=' + defaultSaveName);
+    const resp = await axios.get('/api/load?name=' + name);
     const zipData = resp.data.kvResp;
 
     await writeZipFileToData(zipData, {
