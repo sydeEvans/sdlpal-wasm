@@ -26,7 +26,8 @@ const keycodeMap = {
     'left': 37,
     'space': 32,
     'esc': 27,
-    'r': 82
+    'r': 82,
+    's': 83,
 };
 
 const joyNameMap = {
@@ -36,6 +37,8 @@ const joyNameMap = {
     'button_14': 'left',
     'button_0': 'space',
     'button_9': 'esc',
+    'button_1': 'esc',
+    'button_2': 's',
     'button_3': 'r',
 }
 

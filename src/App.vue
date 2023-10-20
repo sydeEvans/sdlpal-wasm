@@ -112,7 +112,8 @@ export default {
         up, down, left, right 为手柄对应位置, 暂时没绑定摇杆<br/>
         A - 键盘space/enter;<br/>
         Y - 键盘R；<br/>
-        menu - 键盘esc<br/>
+        X - 键盘S, 战斗中查看状态<br/>
+        menu, B - 键盘esc<br/>
       </div>
     </div>
 
