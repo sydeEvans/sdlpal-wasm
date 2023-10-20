@@ -106,6 +106,14 @@ export default {
           云存档拉取
         </button>
       </div>
+
+      <div class="info">
+        支持xbox手柄<br/>
+        up, down, left, right 为手柄对应位置, 暂时没绑定摇杆<br/>
+        A - 键盘space/enter;<br/>
+        Y - 键盘R；<br/>
+        menu - 键盘esc<br/>
+      </div>
     </div>
 
     <!--    <canvas></canvas>-->
@@ -138,5 +146,10 @@ export default {
     margin-top: 20px;
     padding: 10px 20px;
   }
+}
+
+.info{
+  margin-top: 20px;
+  color: white;
 }
 </style>
