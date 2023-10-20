@@ -62,6 +62,16 @@ export default {
     },
     downloadSave() {
       fileAPI.downloadSaves();
+    },
+    async pushCloudSave() {
+      let key = window.prompt("请输入存档名", "");
+      await fileAPI.putSaveToRemote(key);
+      window.alert('推送成功');
+    },
+    async pullCloudSave() {
+      let key = window.prompt("请输入存档名", "");
+      await fileAPI.loadSaveToRemote(key);
+      window.alert('拉取成功');
     }
   },
 
@@ -80,12 +90,20 @@ export default {
         </button>
 
         <button class="btn" @click="downloadSave">
-          下载存档
+          下载存档到本地
         </button>
 
         <input id='fileid' type='file' hidden v-on:change="saveFileChange"/>
         <button class="btn" @click="importSave">
-          导入存档
+          导入本地存档
+        </button>
+
+        <button class="btn" @click="pushCloudSave">
+          云存档推送
+        </button>
+
+        <button class="btn" @click="pullCloudSave">
+          云存档拉取
         </button>
       </div>
     </div>

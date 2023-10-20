@@ -139,7 +139,7 @@ async function clearSave() {
 }
 
 const defaultSaveName = 'save.zip';
-async function putSaveToRemote() {
+async function putSaveToRemote(name = defaultSaveName) {
     const zip = new JSZip();
     let hasData = false;
     Object.keys(FS.lookupPath('/data').node.contents).forEach(element => {
@@ -163,7 +163,7 @@ async function putSaveToRemote() {
     })
 }
 
-async function loadSaveToRemote() {
+async function loadSaveToRemote(name = defaultSaveName) {
     const resp = await axios.get('/api/load?name=' + defaultSaveName);
     const zipData = resp.data.kvResp;
 
